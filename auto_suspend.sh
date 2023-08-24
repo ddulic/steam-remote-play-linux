@@ -20,11 +20,13 @@ while true; do
         break; fi
       # check if a stream is running, if not, start the timer
       while tail -2 /home/${USER}/.steam/steam/logs/streaming_log.txt | grep -q '>>> Stopped desktop stream' || STREAM=true; do
-        if [[ $SECONDS -le 19 && $STREAM == false ]]; then 
+        if [[ $SECONDS -le 14 && $STREAM == false ]]; then 
           echo "No Remote Play Stream running, starting $SUSPEND_TIME minute timer to suspend PC"
         fi
         MINS=$((SECONDS / 60)); 
         if [[ $STREAM == false ]]; then
+          # reset when resuming from sleep
+          if [[ $MINS -gt $SUSPEND_TIME ]]; then break; fi
           echo "Suspending in $((SUSPEND_TIME - MINS)) minutes"
         else
           echo "Stream detected, resetting timer..."
@@ -33,7 +35,7 @@ while true; do
         # if the timer is up, suspend the PC
         if [ "$MINS" -eq "$SUSPEND_TIME" ]; then
           echo "Suspending PC..."
-          sudo systemctl suspend; exit 0
+          sudo systemctl suspend
         fi
         # we want to check if the profile is still loaded, if not, break out of the loop
         PROFILE=$(autorandr --current); if [[ $PROFILE != $AUTORANR_PROFILE ]]; then break; fi; sleep 10

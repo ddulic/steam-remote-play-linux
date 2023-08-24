@@ -4,6 +4,7 @@ After=suspend.target
 
 [Service]
 Type=simple
+Restart=always
 WorkingDirectory=/%h/opt/steam-remote-play-linux
 ExecStart=/usr/bin/env ./auto_suspend.sh
 
